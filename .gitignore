@@ -1,0 +1,19 @@
+# Tarballs
+*.zip
+*.tar.gz
+
+# binaries
+*.o
+*.a
+*.d
+sample
+
+# exception, directory of lib with same name, quite common in my projects
+!sample/
+
+
+# user config.h
+config.h
+
+# tags
+tags
