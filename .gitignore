@@ -6,14 +6,10 @@
 *.o
 *.a
 *.d
-sample
-
-# exception, directory of lib with same name, quite common in my projects
-!sample/
-
+egc
 
 # user config.h
-config.h
+include/config.h
 
 # tags
 tags

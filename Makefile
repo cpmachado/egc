@@ -1,13 +1,10 @@
 # See LICENSE for details
-# makefile for sample
+# makefile for egc
 
 .PHONY: all clean dist install uninstall
 .DEFAULT: all
 
 VERSION = 1.0
-LIBSAMPLE_DIR = ./libsample
-LIBSAMPLE = ${LIBSAMPLE_DIR}/libsample.a
-INC = -I${LIBSAMPLE_DIR}/include
 
 include config.mk
 
@@ -17,69 +14,74 @@ PKGFILES = \
 	LICENSE\
 	Makefile\
 	README.md\
-	cli.c\
 	config.def.h\
 	config.mk\
 	doc\
 	include\
-	libsample\
 	man\
-	sample.c\
-	util.c
+	src
 
-SRC = ${wildcard *.c}
-OBJ = ${SRC:.c=.o}
-DEP = ${SRC:.c=.d}
-BIN = sample
+SRC = ${wildcard src/*.c}
+OBJ = ${patsubst src/%.c,obj/%.o, ${SRC}}
+BIN = egc
 
 
-all: config.h ${BIN}
-	@echo "sample built"
+all: ${BIN}
+	@echo "egc built"
 
 
 clean:
 	@echo cleaning
 	@rm -rf ${OBJ} ${DEP} ${BIN} *.tar.gz
-	@make -C ${LIBSAMPLE_DIR} clean
 
 
 options:
-	@echo "sample compilation flags"
-	@echo "CC        = ${CC}"
-	@echo "CFLAGS    = ${CFLAGS}"
-	@echo "CPPFLAGS  = ${CPPFLAGS}"
-	@echo "OUTPUT_OPTION = ${OUTPUT_OPTION}"
-	@echo "LDFLAGS   = ${LDFLAGS}"
+	@echo "egc compilation flags"
+	@echo "CC         = ${CC}"
+	@echo "CFLAGS     = ${CFLAGS}"
+	@echo "CPPFLAGS   = ${CPPFLAGS}"
+	@echo "LDFLAGS    = ${LDFLAGS}"
+	@echo "SRC        = ${SRC}"
+	@echo "OBJ        = ${OBJ}"
+	@echo "BIN        = ${BIN}"
 
 
 dist: clean
-	mkdir -p sample-${VERSION}
-	cp -r ${PKGFILES} sample-${VERSION}
-	tar -cz  -f sample-${VERSION}.tar.gz sample-${VERSION}
-	rm -r sample-${VERSION}
+	mkdir -p egc-${VERSION}
+	cp -r ${PKGFILES} egc-${VERSION}
+	tar -cz  -f egc-${VERSION}.tar.gz egc-${VERSION}
+	rm -r egc-${VERSION}
 
 
-install: sample
+install: egc
 	@echo installing executable file to ${PREFIX}/bin
 	@mkdir -p ${PREFIX}/bin
 	@cp -f ${BIN} ${PREFIX}/bin
-	@chmod 755 ${PREFIX}/bin/sample
+	@chmod 755 ${PREFIX}/bin/egc
 
 
 uninstall:
 	@echo removing executable file from ${PREFIX}/bin
-	@rm -f ${PREFIX}/bin/sample
+	@rm -f ${PREFIX}/bin/egc
 
 
-config.h: config.def.h
-	cp config.def.h config.h
+include/config.h: config.def.h
+	cp config.def.h include/config.h
 
+obj/%.o: src/%.c
+	@mkdir -p obj
+	${CC} ${CFLAGS} ${CPPFLAGS} -c -o $@ $<
 
-${LIBSAMPLE}:
-	make -C ${LIBSAMPLE_DIR}
+${BIN}: ${OBJ}
+	${CC} -o $@ $^ ${LDFLAGS}
 
+obj/cli.o: src/cli.c
 
-sample: config.h ${OBJ} ${LIBSAMPLE}
-	${CC} $^ -o $@ ${LDFLAGS}
+obj/util.o: src/util.c
 
--include ${DEP}
+obj/rational.o: src/rational.c
+
+obj/main.o: src/main.c
+
+egc: ${OBJ}
+
