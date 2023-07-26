@@ -4,7 +4,7 @@
 .PHONY: all clean dist install uninstall
 .DEFAULT: all
 
-VERSION = 1.0
+VERSION = 0.0
 
 include config.mk
 
