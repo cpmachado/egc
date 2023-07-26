@@ -8,7 +8,7 @@ MANPREFIX = ${PREFIX}/share/man
 # Note put version before including
 
 CC       = gcc
-INC     += -I./include -I/usr/include
+INC     += -I. -I./include -I/usr/include
 CFLAGS  += -W -Wall -Werror -std=c99 -pedantic -Wno-unused-result ${INC}
 CPPFLAGS =\
 	-DVERSION=\"${VERSION}\"\

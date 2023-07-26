@@ -9,7 +9,7 @@
 egc
 
 # user config.h
-include/config.h
+config.h
 
 # tags
 tags

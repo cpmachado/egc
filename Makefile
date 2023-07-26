@@ -65,8 +65,8 @@ uninstall:
 	@rm -f ${PREFIX}/bin/egc
 
 
-include/config.h: config.def.h
-	cp config.def.h include/config.h
+config.h: config.def.h
+	cp config.def.h config.h
 
 obj/%.o: src/%.c
 	@mkdir -p obj
@@ -77,7 +77,7 @@ ${BIN}: ${OBJ}
 
 obj/cli.o: src/cli.c
 
-obj/util.o: src/util.c
+obj/util.o: src/util.c config.h
 
 obj/rational.o: src/rational.c
 
