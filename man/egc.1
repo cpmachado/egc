@@ -4,7 +4,7 @@
 .SH NAME
 egc \- compute unitary fraction expansion of an r in ]0, 1[
 .SH SYNOPSIS
-egc [-h][-v][-c] [-n NUMERATOR] [-d DENOMINATOR]
+egc [-h][-v][-c][-s] [-n NUMERATOR] [-d DENOMINATOR]
 .SH DESCRIPTION
 egc computes the unitary fraction expansion of r, with r in ]0, 1[.
 .SH OPTIONS
@@ -16,7 +16,10 @@ display help and exit
 display version and exit
 .TP
 .BR \-c
-display csv output
+display csv output(overrides -s)
+.TP
+.BR \-s
+display in tuples: (i, n_i)
 .TP
 .BR \-n " " NUMERATOR
 set numerator of fraction

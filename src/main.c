@@ -55,17 +55,32 @@ simpleOutput(long long int *s, long long int n) {
 	}
 }
 
+void
+straightOutput(long long int *s, long long int n) {
+	long long int i;
+
+	for(i = 1; i < n; i++) {
+		printf("(%lld, %lld)", i, s[i]);
+		if (i < n - 1) {
+			putchar(',');
+		}
+	}
+	putchar('\n');
+}
+
+
 int
 main(int argc, char **argv) {
 	long long int s[BUFSIZ];
 	long long int n = 0;
 	long long int num = -1, den = -1;
-	int csv = 0;
+	int csv = 0, straight = 0;
 
 	parseFlags(argc, argv, (CliArgs){
 		.num = &num,
 		.den = &den,
-		.csv = &csv
+		.csv = &csv,
+		.straight = &straight
 	});
 	if(num <= 0) {
 		promptForParameter("numerator: ", &num);
@@ -82,6 +97,8 @@ main(int argc, char **argv) {
 	n = computeUnitaryFractions(num, den, s);
 	if(csv) {
 		csvOutput(s, n);
+	} else if (straight) {
+		straightOutput(s, n);
 	} else {
 		simpleOutput(s, n);
 	}

@@ -35,6 +35,7 @@ void parseFlags(int argc, char **argv, CliArgs args) {
 			case 'h': usage(); exit(EXIT_SUCCESS);
 			case 'v': version(); exit(EXIT_SUCCESS);
 			case 'c': *(args.csv) = 1;break;
+			case 's': *(args.straight) = 1;break;
 			case 'n':
 				if (curr[j + 1] || i > argc - 1
 					|| parseVal(argv[i+1], args.num)) {

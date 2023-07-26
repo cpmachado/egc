@@ -17,7 +17,8 @@ void usage(void) {
 	        "   - v             -- display version and exit\n"
 	        "   - n Numerator   -- set numerator of fraction\n"
 	        "   - d Denominator -- set denominator of fraction\n"
-	        "   - c             -- display csv output\n");
+	        "   - c             -- display csv output\n"
+	        "   - s             -- display output in tuples \n");
 }
 
 

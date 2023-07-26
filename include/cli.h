@@ -3,7 +3,7 @@
 /* CLI parameters */
 typedef struct CliArgs {
 	long long int *num, *den;
-	int *csv;
+	int *csv, *straight;
 } CliArgs;
 
 
