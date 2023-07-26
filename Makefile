@@ -32,7 +32,7 @@ all: ${BIN}
 
 clean:
 	@echo cleaning
-	@rm -rf ${OBJ} ${DEP} ${BIN} *.tar.gz
+	@rm -rf ${OBJ} ${DEP} ${BIN} *.tar.gz *.zip
 
 
 options:
@@ -50,6 +50,7 @@ dist: clean
 	mkdir -p egc-${VERSION}
 	cp -r ${PKGFILES} egc-${VERSION}
 	tar -cz  -f egc-${VERSION}.tar.gz egc-${VERSION}
+	zip -r egc-${VERSION}.zip egc-${VERSION}
 	rm -r egc-${VERSION}
 
 
