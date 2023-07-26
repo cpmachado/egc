@@ -1,39 +1,40 @@
 /* See LICENSE for details */
 
-
 /* HEADERS */
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "cli.h"
-#include "rational.h"
 
 
-void prational(Rational r) {
-	printf(" %ld\n", r.n);
-	printf("---\n");
-	printf("%ld\n", r.d);
-}
-
-
-int main(int argc, char **argv) {
-	Rational r;
+int
+main(int argc, char **argv) {
 	long int s[BUFSIZ];
 	long int n, i = 0;
+	long int num, den;
 
 	parseFlags(argc, argv);
 
-	printf("Input a rational(n / d): ");
-	scanf(" %ld / %ld", &r.n, &r.d);
+	printf("Let r be a rational, such that 0 < r < 1\n");
+	printf("Input r(n / d): ");
+	scanf(" %ld / %ld", &num, &den);
 
 	printf("\n");
 
-	while (r.n > 1) {
-		n = r.d / r.n + 1;
-		s[i++] = n;
-		printf("%ld\n", n);
-		r = rsub(r, (Rational){1, n});
+	if (num > den) {
+		fprintf(stderr, "r not in ]0, 1[\n");
+		exit(EXIT_FAILURE);
 	}
-	s[i++] = r.d;
+
+	while (num > 1) {
+		n = den / num + (den % num > 0);
+		s[i++] = n;
+		num = num * n - den;
+		den = den * n;
+	}
+	if(num > 0) {
+		s[i++] = den;
+	}
 	n = i;
 
 	for(i = 0; i < n; i++) {
