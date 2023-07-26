@@ -1,14 +1,28 @@
 .\" Manpage for egc.
 .\" Contact cpmachado@protonmail.com to correct errors or typos.
-.TH man 8 "26 July 2023" "1.0" "egc man page"
+.TH man 1 "26 July 2023" "1.0" "egc man page"
 .SH NAME
 egc \- compute unitary fraction expansion of an r in ]0, 1[
 .SH SYNOPSIS
-egc [-h][-v]
+egc [-h][-v][-c] [-n NUMERATOR] [-d DENOMINATOR]
 .SH DESCRIPTION
-egc computes the unitary fraction expansion of r in ]0, 1[.
+egc computes the unitary fraction expansion of r, with r in ]0, 1[.
 .SH OPTIONS
-The egc does not take any options.
+.TP
+.BR \-h
+display help and exit
+.TP
+.BR \-v
+display version and exit
+.TP
+.BR \-c
+display csv output
+.TP
+.BR \-n " " NUMERATOR
+set numerator of fraction
+.TP
+.BR \-d " " DENOMINATOR
+set denominator of fraction
 .SH BUGS
 No known bugs.
 .SH AUTHOR
