@@ -10,10 +10,12 @@
 /* FUNCTIONS */
 
 int
-computeUnitaryFractions(long int num, long int den, long int *s) {
-	long int n, i;
+computeUnitaryFractions(long long int num, long long int den, long long int *s) {
+	long long int n, i;
 
-	for (i = 0; num > 1; i++) {
+	s[0] = 0;
+
+	for (i = 1; num > 1; i++) {
 		n = den / num + (den % num > 0);
 		s[i] = n;
 		num = num * n - den;
@@ -28,35 +30,60 @@ computeUnitaryFractions(long int num, long int den, long int *s) {
 }
 
 void
-promptForParameters(long int *num, long int *den) {
-	printf("Let r be a rational, such that 0 < r < 1\n");
-	printf("Input r(n / d): ");
-	scanf(" %ld / %ld", num, den);
+promptForParameter(char *str, long long int *n) {
+	printf("%s", str);
+	scanf(" %lld", n);
+}
+
+void
+csvOutput(long long int *s, long long int n) {
+	long long int i;
+
+	printf("i,n_i\n");
+
+	for(i = 1; i < n; i++) {
+		printf("%lld,%lld\n", i, s[i]);
+	}
+}
+
+void
+simpleOutput(long long int *s, long long int n) {
+	long long int i;
+
+	for(i = 1; i < n; i++) {
+		printf("%lld\n", s[i]);
+	}
 }
 
 int
 main(int argc, char **argv) {
-	long int s[BUFSIZ];
-	long int n, i = 0;
-	long int num, den;
+	long long int s[BUFSIZ];
+	long long int n = 0;
+	long long int num = -1, den = -1;
+	int csv = 0;
 
-	parseFlags(argc, argv);
-	promptForParameters(&num, &den);
+	parseFlags(argc, argv, (CliArgs){
+		.num = &num,
+		.den = &den,
+		.csv = &csv
+	});
+	if(num <= 0) {
+		promptForParameter("numerator: ", &num);
+	}
+	if(den <= 0) {
+		promptForParameter("denominator: ", &den);
+	}
 
-	if (num > den) {
+	if (num > den || num <= 0) {
 		fprintf(stderr, "r not in ]0, 1[\n");
 		exit(EXIT_FAILURE);
 	}
 
 	n = computeUnitaryFractions(num, den, s);
-
-	for(i = 0; i < n; i++) {
-		printf("%ld", s[i]);
-		if(i < n - 1) {
-			putchar(',');
-		}
+	if(csv) {
+		csvOutput(s, n);
+	} else {
+		simpleOutput(s, n);
 	}
-	putchar('\n');
-
 	return 0;
 }

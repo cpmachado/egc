@@ -8,9 +8,9 @@ It's output is in a csv in a different line.
 
 Before release 1.0:
 
-- Add flags to pass parameters directly.
-- Add different format output.
-- Add proper documentation.
+- [x] Add flags to pass parameters directly.
+- [x] Add different format output.(simple vs csv)
+- [ ] Add proper documentation.
 
 After:
 - Expand the suite of capabilities, with:
