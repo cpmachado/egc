@@ -9,7 +9,7 @@
 /* FUNCTION DEFINITIONS */
 void usage(void) {
 	fprintf(stdout,
-	        "sample is a sample program.\n"
+	        "egc computes an unitary fraction expansion of a given n(|n| < 1).\n"
 	        "Usage: sample [OPTIONS]\n"
 	        "Options:\n"
 	        "   - h          -- display help and exit\n"
@@ -19,8 +19,8 @@ void usage(void) {
 
 void version(void) {
 	fprintf(stdout,
-	        "sample-" VERSION
-	        " Copyright © 2020 "
-	        ": Author\n");
+	        "egc-" VERSION
+	        " Copyright © 2023 "
+	        ": cpmachado\n");
 }
 
