@@ -4,10 +4,7 @@
 .PHONY: all clean dist install uninstall
 .DEFAULT: all
 
-VERSION = 0.0
-
 include config.mk
-
 
 # Files for distribution
 PKGFILES = \
@@ -37,6 +34,7 @@ clean:
 
 options:
 	@echo "egc compilation flags"
+	@echo "VERSION    = ${VERSION}"
 	@echo "CC         = ${CC}"
 	@echo "CFLAGS     = ${CFLAGS}"
 	@echo "CPPFLAGS   = ${CPPFLAGS}"
@@ -53,18 +51,15 @@ dist: clean
 	zip -r egc-${VERSION}.zip egc-${VERSION}
 	rm -r egc-${VERSION}
 
-
 install: egc
 	@echo installing executable file to ${PREFIX}/bin
 	@mkdir -p ${PREFIX}/bin
 	@cp -f ${BIN} ${PREFIX}/bin
 	@chmod 755 ${PREFIX}/bin/egc
 
-
 uninstall:
 	@echo removing executable file from ${PREFIX}/bin
 	@rm -f ${PREFIX}/bin/egc
-
 
 config.h: config.def.h
 	cp config.def.h config.h
@@ -77,11 +72,8 @@ ${BIN}: ${OBJ}
 	${CC} -o $@ $^ ${LDFLAGS}
 
 obj/cli.o: src/cli.c
-
 obj/util.o: src/util.c config.h
-
 obj/rational.o: src/rational.c
-
 obj/main.o: src/main.c
 
 egc: ${OBJ}
