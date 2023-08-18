@@ -8,6 +8,9 @@ include config.mk
 
 # Files for distribution
 PKGFILES = \
+	CHANGELOG.md\
+	CODE_OF_CONDUCT.md\
+	CONTRIBUTING.md\
 	LICENSE\
 	Makefile\
 	README.md\
