@@ -14,15 +14,12 @@ PKGFILES = \
 	LICENSE\
 	Makefile\
 	README.md\
-	config.def.h\
 	config.mk\
 	doc\
-	include\
-	man\
-	src
+	man
 
-SRC = ${wildcard src/*.c}
-OBJ = ${patsubst src/%.c,obj/%.o, ${SRC}}
+SRC = ${wildcard *.c}
+OBJ = ${patsubst %.c,obj/%.o, ${SRC}}
 BIN = egc
 
 
@@ -32,7 +29,7 @@ all: ${BIN}
 
 clean:
 	@echo cleaning
-	@rm -rf ${OBJ} ${DEP} ${BIN} *.tar.gz *.zip
+	@rm -rf obj ${BIN} *.tar.gz *.zip
 
 
 options:
@@ -64,20 +61,14 @@ uninstall:
 	@echo removing executable file from ${PREFIX}/bin
 	@rm -f ${PREFIX}/bin/egc
 
-config.h: config.def.h
-	cp config.def.h config.h
 
-obj/%.o: src/%.c
+obj/%.o: %.c
 	@mkdir -p obj
 	${CC} ${CFLAGS} ${CPPFLAGS} -c -o $@ $<
 
 ${BIN}: ${OBJ}
 	${CC} -o $@ $^ ${LDFLAGS}
 
-obj/cli.o: src/cli.c
-obj/util.o: src/util.c config.h
-obj/rational.o: src/rational.c
-obj/main.o: src/main.c
-
+obj/main.o: main.c
 egc: ${OBJ}
 
