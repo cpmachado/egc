@@ -6,24 +6,25 @@
 
 include config.mk
 
-# Files for distribution
-PKGFILES = \
-	CHANGELOG.md\
-	CODE_OF_CONDUCT.md\
-	CONTRIBUTING.md\
-	LICENSE\
-	Makefile\
-	README.md\
-	config.mk\
-	doc\
-	man
-
 SRC = ${wildcard *.c}
+HDR = ${wildcard *.h}
 TEST = ${wildcard tests/*.c}
 OBJ = ${patsubst %.c,obj/%.o, ${SRC}}
 TEST_OBJ = ${patsubst tests/%.c,obj/%.o, ${TEST}}
 TEST_BIN = ${patsubst tests/%.c,%, ${TEST}}
 BIN = egc
+
+# Files for distribution
+PKGFILES = \
+	LICENSE\
+	Makefile\
+	README.md\
+	config.mk\
+	man\
+	tests\
+	${SRC}\
+	${HDR}
+
 
 
 all: ${BIN}
