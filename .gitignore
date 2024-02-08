@@ -7,6 +7,7 @@
 *.a
 *.d
 egc
+test-ds
 
 # user config.h
 config.h
