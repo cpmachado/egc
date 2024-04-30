@@ -3,8 +3,6 @@
 /* HEADERS */
 #include <stdio.h>
 
-#include "config.h"
-
 
 /* FUNCTION DEFINITIONS */
 void usage(void) {

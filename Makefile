@@ -14,7 +14,6 @@ PKGFILES = \
 	LICENSE\
 	Makefile\
 	README.md\
-	config.def.h\
 	config.mk\
 	doc\
 	include\
@@ -64,9 +63,6 @@ uninstall:
 	@echo removing executable file from ${PREFIX}/bin
 	@rm -f ${PREFIX}/bin/egc
 
-config.h: config.def.h
-	cp config.def.h config.h
-
 obj/%.o: src/%.c
 	@mkdir -p obj
 	${CC} ${CFLAGS} ${CPPFLAGS} -c -o $@ $<
@@ -75,7 +71,7 @@ ${BIN}: ${OBJ}
 	${CC} -o $@ $^ ${LDFLAGS}
 
 obj/cli.o: src/cli.c
-obj/util.o: src/util.c config.h
+obj/util.o: src/util.c
 obj/rational.o: src/rational.c
 obj/main.o: src/main.c
 
