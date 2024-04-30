@@ -8,21 +8,16 @@ include config.mk
 
 # Files for distribution
 PKGFILES = \
-	CHANGELOG.md\
-	CODE_OF_CONDUCT.md\
-	CONTRIBUTING.md\
 	LICENSE\
 	Makefile\
 	README.md\
-	config.def.h\
 	config.mk\
 	doc\
-	include\
-	man\
-	src
+	egc.c\
+	man
 
-SRC = ${wildcard src/*.c}
-OBJ = ${patsubst src/%.c,obj/%.o, ${SRC}}
+SRC = egc.c
+OBJ = ${SRC:.c=.o}
 BIN = egc
 
 
@@ -34,6 +29,8 @@ clean:
 	@echo cleaning
 	@rm -rf ${OBJ} ${DEP} ${BIN} *.tar.gz *.zip
 
+lint:
+	cpplint egc.c
 
 options:
 	@echo "egc compilation flags"
@@ -64,20 +61,9 @@ uninstall:
 	@echo removing executable file from ${PREFIX}/bin
 	@rm -f ${PREFIX}/bin/egc
 
-config.h: config.def.h
-	cp config.def.h config.h
-
-obj/%.o: src/%.c
-	@mkdir -p obj
-	${CC} ${CFLAGS} ${CPPFLAGS} -c -o $@ $<
-
 ${BIN}: ${OBJ}
 	${CC} -o $@ $^ ${LDFLAGS}
 
-obj/cli.o: src/cli.c
-obj/util.o: src/util.c config.h
-obj/rational.o: src/rational.c
-obj/main.o: src/main.c
-
+egc.o: egc.c
 egc: ${OBJ}
 
