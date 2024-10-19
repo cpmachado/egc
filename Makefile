@@ -6,10 +6,23 @@
 
 include config.mk
 
+PKGFILES = \
+	CPPLINT.cfg\
+	LICENSE\
+	Makefile\
+	README.md\
+	config.mk\
+	doc\
+	include\
+	man\
+	src
+
 SRC_DIR = src
 BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
 BIN_DIR = $(BUILD_DIR)/bin
+DIST_DIR = $(BUILD_DIR)/dist
+DIST_BASE_DIR = $(DIST_DIR)/egc-$(VERSION)
 
 SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o, $(SRC))
@@ -18,7 +31,6 @@ BIN = $(BIN_DIR)/egc
 
 all: ${BIN}
 	@echo "egc built"
-
 
 clean:
 	@echo cleaning
@@ -40,11 +52,10 @@ options:
 
 
 dist: clean
-	mkdir -p egc-${VERSION}
-	cp -r ${PKGFILES} egc-${VERSION}
-	tar -cz  -f egc-${VERSION}.tar.gz egc-${VERSION}
-	zip -r egc-${VERSION}.zip egc-${VERSION}
-	rm -r egc-${VERSION}
+	mkdir -p $(DIST_BASE_DIR)
+	cp -r ${PKGFILES} $(DIST_BASE_DIR)
+	tar -cz  -f $(DIST_BASE_DIR).tar.gz $(DIST_BASE_DIR)
+	zip -r $(DIST_BASE_DIR).zip $(DIST_BASE_DIR)
 
 install: egc
 	@echo installing executable file to ${PREFIX}/bin
