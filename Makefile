@@ -6,19 +6,14 @@
 
 include config.mk
 
-# Files for distribution
-PKGFILES = \
-	LICENSE\
-	Makefile\
-	README.md\
-	config.mk\
-	doc\
-	egc.c\
-	man
+SRC_DIR = src
+BUILD_DIR = build
+OBJ_DIR = $(BUILD_DIR)/obj
+BIN_DIR = $(BUILD_DIR)/bin
 
-SRC = egc.c
-OBJ = ${SRC:.c=.o}
-BIN = egc
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o, $(SRC))
+BIN = $(BIN_DIR)/egc
 
 
 all: ${BIN}
@@ -27,10 +22,10 @@ all: ${BIN}
 
 clean:
 	@echo cleaning
-	@rm -rf ${OBJ} ${DEP} ${BIN} *.tar.gz *.zip
+	@rm -rf $(BUILD_DIR)
 
 lint:
-	cpplint egc.c
+	@cpplint --recursive $(SRC_DIR)
 
 options:
 	@echo "egc compilation flags"
@@ -61,9 +56,16 @@ uninstall:
 	@echo removing executable file from ${PREFIX}/bin
 	@rm -f ${PREFIX}/bin/egc
 
-${BIN}: ${OBJ}
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+$(BIN): ${OBJ} | $(BIN_DIR)
 	${CC} -o $@ $^ ${LDFLAGS}
 
-egc.o: egc.c
-egc: ${OBJ}
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
+$(OBJ_DIR)/egc.o: $(SRC_DIR)/egc.c
