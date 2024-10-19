@@ -51,7 +51,7 @@ options:
 	@echo "BIN        = ${BIN}"
 
 
-dist: clean
+dist:
 	mkdir -p $(DIST_BASE_DIR)
 	cp -r ${PKGFILES} $(DIST_BASE_DIR)
 	tar -cz  -f $(DIST_BASE_DIR).tar.gz $(DIST_BASE_DIR)
