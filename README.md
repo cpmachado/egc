@@ -1,5 +1,7 @@
 # egc
 
+[![CI](https://github.com/cpmachado/egc/actions/workflows/ci.yml/badge.svg)](https://github.com/cpmachado/egc/actions/workflows/ci.yml)
+
 A simple program to compute an unitary fraction expansion of a given fraction.
 
 It's output is in a csv in a different line.
