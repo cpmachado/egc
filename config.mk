@@ -1,6 +1,6 @@
 # configuration of system
 
-VERSION = $(shell cat VERSION)
+VERSION = 0.0.1
 
 # installation
 PREFIX ?= /usr/local
