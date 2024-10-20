@@ -11,14 +11,14 @@ The source of these is a course I took in university:
 
 ## Components
 - egc: cli interface
- + shell to perform operations
- + enable scripting
- + options to redirect output
+  + shell to perform operations
+  + enable scripting
+  + options to redirect output
 - libegc: library to leverage this methods
- + table structure
- + multiplication method
- + division method
- + unit fraction type
- + egyptian fraction type and computation
- + false position method
- + TBD
+  + table structure
+  + multiplication method
+  + division method
+  + unit fraction type
+  + egyptian fraction type and computation
+  + false position method
+  + TBD
