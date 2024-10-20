@@ -47,6 +47,11 @@ int32_t main(int32_t argc, char **argv) {
       version();
       exit(EXIT_SUCCESS);
     case 'c':
+      if (straight) {
+        fprintf(stderr, "Already chose straight output\n");
+        usage();
+        exit(EXIT_FAILURE);
+      }
       csv = 1;
       break;
     case 's':
