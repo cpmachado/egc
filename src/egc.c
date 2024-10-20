@@ -50,6 +50,11 @@ int32_t main(int32_t argc, char **argv) {
       csv = 1;
       break;
     case 's':
+      if (csv) {
+        fprintf(stderr, "Already chose csv output\n");
+        usage();
+        exit(EXIT_FAILURE);
+      }
       straight = 1;
       break;
     case 'n':
