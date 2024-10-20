@@ -36,6 +36,7 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 lint:
+	@cppcheck $(SRC_DIR)
 	@cpplint --recursive $(SRC_DIR)
 
 options:
