@@ -137,7 +137,17 @@ int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s) {
   for (i = 1; num > 1; i++) {
     n = den / num + (den % num > 0);
     s[i] = n;
+    if (INT64_MAX / n < num) {
+      fprintf(stderr, "Overflow detected\n");
+      printf("num = %ld, n = %ld\n", num, n);
+      exit(EXIT_FAILURE);
+    }
     num = num * n - den;
+    if (INT64_MAX / n < den) {
+      fprintf(stderr, "Overflow detected\n");
+      printf("den = %ld, n = %ld\n", den, n);
+      exit(EXIT_FAILURE);
+    }
     den = den * n;
   }
 
