@@ -19,4 +19,6 @@ The source of these is a course I took in university:
  + multiplication method
  + division method
  + unit fraction type
+ + egyptian fraction type and computation
  + false position method
+ + TBD
