@@ -1,25 +1,27 @@
 /* Copyright 2024 cpmachado */
 
 /* HEADERS */
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #ifndef VERSION
 #define VERSION "unknown"
 #endif
 
-/* TYPES */
-typedef struct CliArgs {
-  int64_t *num, *den;
-  int32_t *csv, *straight;
-} CliArgs;
+extern int errno;
+extern char *optarg;
 
 /* FUNCTION DECLARATIONS */
 
-void parseFlags(int32_t argc, char **argv, CliArgs args);
+void usage(void);
 
-void promptForParameter(char *str, int64_t *n);
+void version(void);
+
+int64_t readPositiveInt64(void);
 
 void csvOutput(int64_t *s, int64_t n);
 
@@ -34,15 +36,61 @@ int32_t main(int32_t argc, char **argv) {
   int64_t n = 0;
   int64_t num = -1, den = -1;
   int32_t csv = 0, straight = 0;
+  int opt;
 
-  parseFlags(
-      argc, argv,
-      (CliArgs){.num = &num, .den = &den, .csv = &csv, .straight = &straight});
+  while ((opt = getopt(argc, argv, "hvcsn:d:")) != -1) {
+    switch (opt) {
+    case 'h':
+      usage();
+      exit(EXIT_SUCCESS);
+    case 'v':
+      version();
+      exit(EXIT_SUCCESS);
+    case 'c':
+      if (straight) {
+        fprintf(stderr, "Already chose straight output\n");
+        usage();
+        exit(EXIT_FAILURE);
+      }
+      csv = 1;
+      break;
+    case 's':
+      if (csv) {
+        fprintf(stderr, "Already chose csv output\n");
+        usage();
+        exit(EXIT_FAILURE);
+      }
+      straight = 1;
+      break;
+    case 'n':
+      num = strtoll(optarg, NULL, 10);
+      if (errno) {
+        fprintf(stderr, "%s", strerror(errno));
+        usage();
+        exit(EXIT_FAILURE);
+      }
+      break;
+    case 'd':
+      den = strtoll(optarg, NULL, 10);
+      if (errno) {
+        fprintf(stderr, "%s", strerror(errno));
+        usage();
+        exit(EXIT_FAILURE);
+      }
+      break;
+
+    default:
+      usage();
+      exit(EXIT_FAILURE);
+    }
+  }
   if (num <= 0) {
-    promptForParameter("numerator: ", &num);
+    printf("numerator: ");
+    num = readPositiveInt64();
   }
   if (den <= 0) {
-    promptForParameter("denominator: ", &den);
+    printf("denominator: ");
+    den = readPositiveInt64();
   }
 
   if (num > den || num <= 0) {
@@ -81,60 +129,6 @@ void version(void) {
                   ": cpmachado\n");
 }
 
-int32_t parseVal(char *str, int64_t *n) {
-  *n = atoll(str);
-  if (*n <= 0) {
-    printf("Invalid value %s\n", str);
-    return 1;
-  }
-  return 0;
-}
-
-void parseFlags(int32_t argc, char **argv, CliArgs args) {
-  int32_t i, j;
-  char *curr;
-
-  for (i = 1; i < argc; i++) {
-    curr = argv[i];
-    if (*curr != '-') {
-      break;
-    }
-    for (j = 1; curr[j]; j++) {
-      switch (curr[j]) {
-      case 'h':
-        usage();
-        exit(EXIT_SUCCESS);
-      case 'v':
-        version();
-        exit(EXIT_SUCCESS);
-      case 'c':
-        *(args.csv) = 1;
-        break;
-      case 's':
-        *(args.straight) = 1;
-        break;
-      case 'n':
-        if (curr[j + 1] || i > argc - 1 || parseVal(argv[i + 1], args.num)) {
-          usage();
-          exit(EXIT_FAILURE);
-        }
-        i++;
-        break;
-      case 'd':
-        if (curr[j + 1] || i > argc - 1 || parseVal(argv[i + 1], args.den)) {
-          usage();
-          exit(EXIT_FAILURE);
-        }
-        i++;
-        break;
-      default:
-        usage();
-        exit(EXIT_FAILURE);
-      }
-    }
-  }
-}
-
 int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s) {
   int64_t n, i;
 
@@ -154,9 +148,21 @@ int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s) {
   return i;
 }
 
-void promptForParameter(char *str, int64_t *n) {
-  printf("%s", str);
-  scanf(" %ld", n);
+int64_t readPositiveInt64() {
+  char buf[BUFSIZ];
+  int64_t n;
+
+  if (!fgets(buf, BUFSIZ, stdin)) {
+    fprintf(stderr, "Failed to read number.");
+    exit(EXIT_FAILURE);
+  }
+  n = strtoll(buf, NULL, 10);
+  if (errno) {
+    fprintf(stderr, "%s", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+
+  return n;
 }
 
 void csvOutput(int64_t *s, int64_t n) {
