@@ -6,64 +6,77 @@
 
 include config.mk
 
-# Files for distribution
 PKGFILES = \
+	CPPLINT.cfg\
 	LICENSE\
 	Makefile\
 	README.md\
 	config.mk\
 	doc\
-	egc.c\
-	man
+	man\
+	src
 
-SRC = egc.c
-OBJ = ${SRC:.c=.o}
-BIN = egc
+SRC_DIR = src
+BUILD_DIR = build
+OBJ_DIR = $(BUILD_DIR)/obj
+BIN_DIR = $(BUILD_DIR)/bin
+DIST_DIR = $(BUILD_DIR)/dist
+DIST_BASE_DIR = $(DIST_DIR)/egc-$(VERSION)
+
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o, $(SRC))
+BIN = $(BIN_DIR)/egc
 
 
-all: ${BIN}
+all: $(BIN)
 	@echo "egc built"
-
 
 clean:
 	@echo cleaning
-	@rm -rf ${OBJ} ${DEP} ${BIN} *.tar.gz *.zip
+	@rm -rf $(BUILD_DIR)
 
 lint:
-	cpplint egc.c
+	@cppcheck $(SRC_DIR)
+	@cpplint --recursive $(SRC_DIR)
 
 options:
 	@echo "egc compilation flags"
-	@echo "VERSION    = ${VERSION}"
-	@echo "CC         = ${CC}"
-	@echo "CFLAGS     = ${CFLAGS}"
-	@echo "CPPFLAGS   = ${CPPFLAGS}"
-	@echo "LDFLAGS    = ${LDFLAGS}"
-	@echo "SRC        = ${SRC}"
-	@echo "OBJ        = ${OBJ}"
-	@echo "BIN        = ${BIN}"
+	@echo "VERSION    = $(VERSION)"
+	@echo "CC         = $(CC)"
+	@echo "CFLAGS     = $(CFLAGS)"
+	@echo "CPPFLAGS   = $(CPPFLAGS)"
+	@echo "LDFLAGS    = $(LDFLAGS)"
+	@echo "SRC        = $(SRC)"
+	@echo "OBJ        = $(OBJ)"
+	@echo "BIN        = $(BIN)"
 
 
-dist: clean
-	mkdir -p egc-${VERSION}
-	cp -r ${PKGFILES} egc-${VERSION}
-	tar -cz  -f egc-${VERSION}.tar.gz egc-${VERSION}
-	zip -r egc-${VERSION}.zip egc-${VERSION}
-	rm -r egc-${VERSION}
+dist:
+	mkdir -p $(DIST_BASE_DIR)
+	cp -r $(PKGFILES) $(DIST_BASE_DIR)
+	tar -cz  -f $(DIST_BASE_DIR).tar.gz $(DIST_BASE_DIR)
+	zip -r $(DIST_BASE_DIR).zip $(DIST_BASE_DIR)
 
 install: egc
-	@echo installing executable file to ${PREFIX}/bin
-	@mkdir -p ${PREFIX}/bin
-	@cp -f ${BIN} ${PREFIX}/bin
-	@chmod 755 ${PREFIX}/bin/egc
+	@echo installing executable file to $(PREFIX)/bin
+	@mkdir -p $(PREFIX)/bin
+	@cp -f $(BIN) $(PREFIX)/bin
+	@chmod 755 $(PREFIX)/bin/egc
 
 uninstall:
-	@echo removing executable file from ${PREFIX}/bin
-	@rm -f ${PREFIX}/bin/egc
+	@echo removing executable file from $(PREFIX)/bin
+	@rm -f $(PREFIX)/bin/egc
 
-${BIN}: ${OBJ}
-	${CC} -o $@ $^ ${LDFLAGS}
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-egc.o: egc.c
-egc: ${OBJ}
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
+$(BIN): $(OBJ) | $(BIN_DIR)
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+$(OBJ_DIR)/egc.o: $(SRC_DIR)/egc.c

@@ -1,15 +1,5 @@
-# Tarballs
-*.zip
-*.tar.gz
-
-# binaries
-*.o
-*.a
-*.d
-egc
-
-# user config.h
-config.h
+# build folder
+build
 
 # tags
 tags

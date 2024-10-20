@@ -1,6 +1,6 @@
 # configuration of system
 
-VERSION = $(shell cat VERSION)
+VERSION = 0.0.1
 
 # installation
 PREFIX ?= /usr/local
@@ -14,4 +14,4 @@ CPPFLAGS =\
 	-D_BSD_SOURCE\
 	-D_DEFAULT_SOURCE\
 	-D_POSIX_C_SOURCE=200809L
-LDFLAGS =
+LDFLAGS = -lc
