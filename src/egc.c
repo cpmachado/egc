@@ -129,15 +129,45 @@ void version(void) {
                   ": cpmachado\n");
 }
 
+int64_t gcdInt64(int64_t a, int64_t b) {
+  int64_t c;
+  while (b > 0) {
+    if (a > b) {
+      c = a;
+      a = b;
+      b = c % a;
+    } else {
+      b = b % a;
+    }
+  }
+  return a;
+}
+
 int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s) {
   int64_t n, i;
 
   s[0] = 0;
 
   for (i = 1; num > 1; i++) {
+    /* normalise denominator and numerator */
+    n = gcdInt64(num, den);
+    num = num / n;
+    den = den / n;
+
+    /* The real n */
     n = den / num + (den % num > 0);
     s[i] = n;
+    if (INT64_MAX / n < num) {
+      fprintf(stderr, "Overflow detected\n");
+      printf("num = %ld, n = %ld\n", num, n);
+      exit(EXIT_FAILURE);
+    }
     num = num * n - den;
+    if (INT64_MAX / n < den) {
+      fprintf(stderr, "Overflow detected\n");
+      printf("den = %ld, n = %ld\n", den, n);
+      exit(EXIT_FAILURE);
+    }
     den = den * n;
   }
 
