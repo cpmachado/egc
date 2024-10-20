@@ -21,7 +21,7 @@ void usage(void);
 
 void version(void);
 
-void promptForParameter(char *str, int64_t *n);
+int64_t readPositiveInt64(void);
 
 void csvOutput(int64_t *s, int64_t n);
 
@@ -40,45 +40,47 @@ int32_t main(int32_t argc, char **argv) {
 
   while ((opt = getopt(argc, argv, "hvcsn:d:")) != -1) {
     switch (opt) {
-      case 'h':
-        usage();
-        exit(EXIT_SUCCESS);
-      case 'v':
-        version();
-        exit(EXIT_SUCCESS);
-      case 'c':
-        csv = 1;
-        break;
-      case 's':
-        straight = 1;
-        break;
-      case 'n':
-        num = strtoll(optarg, NULL, 10);
-        if (errno) {
-          fprintf(stderr, "%s", strerror(errno));
-          usage();
-          exit(EXIT_FAILURE);
-        }
-        break;
-      case 'd':
-        den = strtoll(optarg, NULL, 10);
-        if (errno) {
-          fprintf(stderr, "%s", strerror(errno));
-          usage();
-          exit(EXIT_FAILURE);
-        }
-        break;
-
-      default:
+    case 'h':
+      usage();
+      exit(EXIT_SUCCESS);
+    case 'v':
+      version();
+      exit(EXIT_SUCCESS);
+    case 'c':
+      csv = 1;
+      break;
+    case 's':
+      straight = 1;
+      break;
+    case 'n':
+      num = strtoll(optarg, NULL, 10);
+      if (errno) {
+        fprintf(stderr, "%s", strerror(errno));
         usage();
         exit(EXIT_FAILURE);
+      }
+      break;
+    case 'd':
+      den = strtoll(optarg, NULL, 10);
+      if (errno) {
+        fprintf(stderr, "%s", strerror(errno));
+        usage();
+        exit(EXIT_FAILURE);
+      }
+      break;
+
+    default:
+      usage();
+      exit(EXIT_FAILURE);
     }
   }
   if (num <= 0) {
-    promptForParameter("numerator: ", &num);
+    printf("numerator: ");
+    num = readPositiveInt64();
   }
   if (den <= 0) {
-    promptForParameter("denominator: ", &den);
+    printf("denominator: ");
+    den = readPositiveInt64();
   }
 
   if (num > den || num <= 0) {
@@ -100,32 +102,21 @@ int32_t main(int32_t argc, char **argv) {
 /* FUNCTION DEFINITIONS */
 
 void usage(void) {
-  fprintf(stdout,
-          "egc computes an unitary fraction expansion of a given n.\n"
-          "                   n is a rational, such that 0 < n < 1.\n\n"
-          "Usage: egc [OPTIONS] [-n NUMERATOR] [-d DENOMINATOR]\n"
-          "Options:\n"
-          "   - h             -- display help and exit\n"
-          "   - v             -- display version and exit\n"
-          "   - n Numerator   -- set numerator of fraction\n"
-          "   - d Denominator -- set denominator of fraction\n"
-          "   - c             -- display csv output\n"
-          "   - s             -- display output in tuples \n");
+  fprintf(stdout, "egc computes an unitary fraction expansion of a given n.\n"
+                  "                   n is a rational, such that 0 < n < 1.\n\n"
+                  "Usage: egc [OPTIONS] [-n NUMERATOR] [-d DENOMINATOR]\n"
+                  "Options:\n"
+                  "   - h             -- display help and exit\n"
+                  "   - v             -- display version and exit\n"
+                  "   - n Numerator   -- set numerator of fraction\n"
+                  "   - d Denominator -- set denominator of fraction\n"
+                  "   - c             -- display csv output\n"
+                  "   - s             -- display output in tuples \n");
 }
 
 void version(void) {
-  fprintf(stdout, "egc-" VERSION
-                  " Copyright © 2023 "
+  fprintf(stdout, "egc-" VERSION " Copyright © 2023 "
                   ": cpmachado\n");
-}
-
-int32_t parseVal(char *str, int64_t *n) {
-  *n = atoll(str);
-  if (*n <= 0) {
-    printf("Invalid value %s\n", str);
-    return 1;
-  }
-  return 0;
 }
 
 int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s) {
@@ -147,9 +138,21 @@ int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s) {
   return i;
 }
 
-void promptForParameter(char *str, int64_t *n) {
-  printf("%s", str);
-  scanf(" %ld", n);
+int64_t readPositiveInt64() {
+  char buf[BUFSIZ];
+  int64_t n;
+
+  if (!fgets(buf, BUFSIZ, stdin)) {
+    fprintf(stderr, "Failed to read number.");
+    exit(EXIT_FAILURE);
+  }
+  n = strtoll(buf, NULL, 10);
+  if (errno) {
+    fprintf(stderr, "%s", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+
+  return n;
 }
 
 void csvOutput(int64_t *s, int64_t n) {
