@@ -1,23 +1,25 @@
 /* Copyright 2024 cpmachado */
 
 /* HEADERS */
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #ifndef VERSION
 #define VERSION "unknown"
 #endif
 
-/* TYPES */
-typedef struct CliArgs {
-  int64_t *num, *den;
-  int32_t *csv, *straight;
-} CliArgs;
+extern int errno;
+extern char *optarg;
 
 /* FUNCTION DECLARATIONS */
 
-void parseFlags(int32_t argc, char **argv, CliArgs args);
+void usage(void);
+
+void version(void);
 
 void promptForParameter(char *str, int64_t *n);
 
@@ -34,10 +36,44 @@ int32_t main(int32_t argc, char **argv) {
   int64_t n = 0;
   int64_t num = -1, den = -1;
   int32_t csv = 0, straight = 0;
+  int opt;
 
-  parseFlags(
-      argc, argv,
-      (CliArgs){.num = &num, .den = &den, .csv = &csv, .straight = &straight});
+  while ((opt = getopt(argc, argv, "hvcsn:d:")) != -1) {
+    switch (opt) {
+      case 'h':
+        usage();
+        exit(EXIT_SUCCESS);
+      case 'v':
+        version();
+        exit(EXIT_SUCCESS);
+      case 'c':
+        csv = 1;
+        break;
+      case 's':
+        straight = 1;
+        break;
+      case 'n':
+        num = strtoll(optarg, NULL, 10);
+        if (errno) {
+          fprintf(stderr, "%s", strerror(errno));
+          usage();
+          exit(EXIT_FAILURE);
+        }
+        break;
+      case 'd':
+        den = strtoll(optarg, NULL, 10);
+        if (errno) {
+          fprintf(stderr, "%s", strerror(errno));
+          usage();
+          exit(EXIT_FAILURE);
+        }
+        break;
+
+      default:
+        usage();
+        exit(EXIT_FAILURE);
+    }
+  }
   if (num <= 0) {
     promptForParameter("numerator: ", &num);
   }
@@ -64,20 +100,22 @@ int32_t main(int32_t argc, char **argv) {
 /* FUNCTION DEFINITIONS */
 
 void usage(void) {
-  fprintf(stdout, "egc computes an unitary fraction expansion of a given n.\n"
-                  "                   n is a rational, such that 0 < n < 1.\n\n"
-                  "Usage: egc [OPTIONS] [-n NUMERATOR] [-d DENOMINATOR]\n"
-                  "Options:\n"
-                  "   - h             -- display help and exit\n"
-                  "   - v             -- display version and exit\n"
-                  "   - n Numerator   -- set numerator of fraction\n"
-                  "   - d Denominator -- set denominator of fraction\n"
-                  "   - c             -- display csv output\n"
-                  "   - s             -- display output in tuples \n");
+  fprintf(stdout,
+          "egc computes an unitary fraction expansion of a given n.\n"
+          "                   n is a rational, such that 0 < n < 1.\n\n"
+          "Usage: egc [OPTIONS] [-n NUMERATOR] [-d DENOMINATOR]\n"
+          "Options:\n"
+          "   - h             -- display help and exit\n"
+          "   - v             -- display version and exit\n"
+          "   - n Numerator   -- set numerator of fraction\n"
+          "   - d Denominator -- set denominator of fraction\n"
+          "   - c             -- display csv output\n"
+          "   - s             -- display output in tuples \n");
 }
 
 void version(void) {
-  fprintf(stdout, "egc-" VERSION " Copyright © 2023 "
+  fprintf(stdout, "egc-" VERSION
+                  " Copyright © 2023 "
                   ": cpmachado\n");
 }
 
@@ -88,51 +126,6 @@ int32_t parseVal(char *str, int64_t *n) {
     return 1;
   }
   return 0;
-}
-
-void parseFlags(int32_t argc, char **argv, CliArgs args) {
-  int32_t i, j;
-  char *curr;
-
-  for (i = 1; i < argc; i++) {
-    curr = argv[i];
-    if (*curr != '-') {
-      break;
-    }
-    for (j = 1; curr[j]; j++) {
-      switch (curr[j]) {
-      case 'h':
-        usage();
-        exit(EXIT_SUCCESS);
-      case 'v':
-        version();
-        exit(EXIT_SUCCESS);
-      case 'c':
-        *(args.csv) = 1;
-        break;
-      case 's':
-        *(args.straight) = 1;
-        break;
-      case 'n':
-        if (curr[j + 1] || i > argc - 1 || parseVal(argv[i + 1], args.num)) {
-          usage();
-          exit(EXIT_FAILURE);
-        }
-        i++;
-        break;
-      case 'd':
-        if (curr[j + 1] || i > argc - 1 || parseVal(argv[i + 1], args.den)) {
-          usage();
-          exit(EXIT_FAILURE);
-        }
-        i++;
-        break;
-      default:
-        usage();
-        exit(EXIT_FAILURE);
-      }
-    }
-  }
 }
 
 int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s) {
