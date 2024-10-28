@@ -23,8 +23,8 @@ BIN_DIR = $(BUILD_DIR)/bin
 DIST_DIR = $(BUILD_DIR)/dist
 DIST_BASE_DIR = $(DIST_DIR)/egc-$(VERSION)
 
-LIBEGC_SRC_DIR = src/libegc
-LIBEGC_OBJ_DIR = $(BUILD_DIR)/obj/libegc
+LIBEGC_SRC_DIR = src/egc
+LIBEGC_OBJ_DIR = $(BUILD_DIR)/obj/egc
 LIBEGC_SRC = $(wildcard $(LIBEGC_SRC_DIR)/*.c)
 LIBEGC_OBJ = $(patsubst $(LIBEGC_SRC_DIR)/%.c,$(LIBEGC_OBJ_DIR)/%.o, $(LIBEGC_SRC))
 LIBEGC_BIN = $(BUILD_DIR)/libegc.a
@@ -91,7 +91,7 @@ $(BIN_DIR):
 $(LIBEGC_BIN): $(LIBEGC_OBJ) | $(BUILD_DIR)
 	ar rcs $@ $^
 
-$(BIN): $(OBJ) | $(BIN_DIR)
+$(BIN): $(OBJ) $(LIBEGC_BIN) | $(BIN_DIR)
 	$(CC) -o $@ $^ $(LDFLAGS)
 	
 $(LIBEGC_OBJ_DIR)/%.o: $(LIBEGC_SRC_DIR)/%.c | $(LIBEGC_OBJ_DIR)
