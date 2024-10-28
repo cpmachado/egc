@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "libegc.h"
+#include "egc.h"
 
 int64_t gcd(int64_t a, int64_t b) {
   int64_t c;
@@ -41,6 +41,8 @@ int64_t computeEgyptianFraction(Fraction *fraction,
     }
     den = den * n;
   }
+  egyptian->dens[i] = den;
+  i++;
   egyptian->n = i;
   return i;
 }
