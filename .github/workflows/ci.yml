@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: '3.9'
       - run: pip install cpplint===1.6.1
-      - run: sudo apt install cppcheck -y
+      - run: sudo snap install cppcheck
       - run: make lint
   dist:
     runs-on: ubuntu-latest

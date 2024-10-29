@@ -8,6 +8,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "egc.h"
+
 #ifndef VERSION
 #define VERSION "unknown"
 #endif
@@ -23,18 +25,16 @@ void version(void);
 
 int64_t readPositiveInt64(void);
 
-void csvOutput(int64_t *s, int64_t n);
+void csvOutput(EgyptianFraction *s);
 
-void simpleOutput(int64_t *s, int64_t n);
+void simpleOutput(EgyptianFraction *s);
 
-void straightOutput(int64_t *s, int64_t n);
-
-int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s);
+void straightOutput(EgyptianFraction *s);
 
 int32_t main(int32_t argc, char **argv) {
-  int64_t s[BUFSIZ];
   int64_t n = 0;
-  int64_t num = -1, den = -1;
+  Fraction fraction = {.num = -1, .den = -1};
+  EgyptianFraction egyptian;
   int32_t csv = 0, straight = 0;
   int opt;
 
@@ -63,7 +63,7 @@ int32_t main(int32_t argc, char **argv) {
       straight = 1;
       break;
     case 'n':
-      num = strtoll(optarg, NULL, 10);
+      fraction.num = strtoll(optarg, NULL, 10);
       if (errno) {
         fprintf(stderr, "%s", strerror(errno));
         usage();
@@ -71,7 +71,7 @@ int32_t main(int32_t argc, char **argv) {
       }
       break;
     case 'd':
-      den = strtoll(optarg, NULL, 10);
+      fraction.den = strtoll(optarg, NULL, 10);
       if (errno) {
         fprintf(stderr, "%s", strerror(errno));
         usage();
@@ -84,27 +84,30 @@ int32_t main(int32_t argc, char **argv) {
       exit(EXIT_FAILURE);
     }
   }
-  if (num <= 0) {
+  if (fraction.num <= 0) {
     printf("numerator: ");
-    num = readPositiveInt64();
+    fraction.num = readPositiveInt64();
   }
-  if (den <= 0) {
+  if (fraction.den <= 0) {
     printf("denominator: ");
-    den = readPositiveInt64();
+    fraction.den = readPositiveInt64();
   }
 
-  if (num > den || num <= 0) {
+  if (fraction.num > fraction.den || fraction.num <= 0) {
     fprintf(stderr, "r not in ]0, 1[\n");
     exit(EXIT_FAILURE);
   }
 
-  n = computeUnitaryFractions(num, den, s);
+  if ((n = computeEgyptianFraction(&fraction, &egyptian)) <= 0) {
+    fprintf(stderr, "Failed computeEgyptianFration with code %ld\n", n);
+    exit(EXIT_FAILURE);
+  }
   if (csv) {
-    csvOutput(s, n);
+    csvOutput(&egyptian);
   } else if (straight) {
-    straightOutput(s, n);
+    straightOutput(&egyptian);
   } else {
-    simpleOutput(s, n);
+    simpleOutput(&egyptian);
   }
   return 0;
 }
@@ -129,55 +132,6 @@ void version(void) {
                   ": cpmachado\n");
 }
 
-int64_t gcdInt64(int64_t a, int64_t b) {
-  int64_t c;
-  while (b > 0) {
-    if (a > b) {
-      c = a;
-      a = b;
-      b = c % a;
-    } else {
-      b = b % a;
-    }
-  }
-  return a;
-}
-
-int32_t computeUnitaryFractions(int64_t num, int64_t den, int64_t *s) {
-  int64_t n, i;
-
-  s[0] = 0;
-
-  for (i = 1; num > 1; i++) {
-    /* normalise denominator and numerator */
-    n = gcdInt64(num, den);
-    num = num / n;
-    den = den / n;
-
-    /* The real n */
-    n = den / num + (den % num > 0);
-    s[i] = n;
-    if (INT64_MAX / n < num) {
-      fprintf(stderr, "Overflow detected\n");
-      printf("num = %ld, n = %ld\n", num, n);
-      exit(EXIT_FAILURE);
-    }
-    num = num * n - den;
-    if (INT64_MAX / n < den) {
-      fprintf(stderr, "Overflow detected\n");
-      printf("den = %ld, n = %ld\n", den, n);
-      exit(EXIT_FAILURE);
-    }
-    den = den * n;
-  }
-
-  if (num > 0) {
-    s[i] = den;
-    i++;
-  }
-  return i;
-}
-
 int64_t readPositiveInt64() {
   char buf[BUFSIZ];
   int64_t n;
@@ -195,30 +149,30 @@ int64_t readPositiveInt64() {
   return n;
 }
 
-void csvOutput(int64_t *s, int64_t n) {
+void csvOutput(EgyptianFraction *s) {
   int64_t i;
 
   printf("i,n_i\n");
 
-  for (i = 1; i < n; i++) {
-    printf("%ld,%ld\n", i, s[i]);
+  for (i = 0; i < s->n; i++) {
+    printf("%ld,%ld\n", i, s->dens[i]);
   }
 }
 
-void simpleOutput(int64_t *s, int64_t n) {
+void simpleOutput(EgyptianFraction *s) {
   int64_t i;
 
-  for (i = 1; i < n; i++) {
-    printf("%ld\n", s[i]);
+  for (i = 0; i < s->n; i++) {
+    printf("%ld\n", s->dens[i]);
   }
 }
 
-void straightOutput(int64_t *s, int64_t n) {
+void straightOutput(EgyptianFraction *s) {
   int64_t i;
 
-  for (i = 1; i < n; i++) {
-    printf("(%ld, %ld)", i, s[i]);
-    if (i < n - 1) {
+  for (i = 0; i < s->n; i++) {
+    printf("(%ld, %ld)", i, s->dens[i]);
+    if (i < s->n - 1) {
       putchar(',');
     }
   }
