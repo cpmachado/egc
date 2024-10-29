@@ -42,8 +42,8 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 lint:
-	@cppcheck $(SRC_DIR)
-	@cpplint --recursive $(SRC_DIR)
+	@cppcheck --check-level=exhaustive $(SRC_DIR) include
+	@cpplint --recursive $(SRC_DIR) include
 
 options:
 	@echo "egc compilation flags"
