@@ -63,7 +63,7 @@ options:
 dist:
 	mkdir -p $(DIST_BASE_DIR)
 	cp -r $(PKGFILES) $(DIST_BASE_DIR)
-	tar -cz  -f $(DIST_BASE_DIR).tar.gz $(DIST_BASE_DIR)
+	tar -cz  -f $(DIST_BASE_DIR).tar.gz -C $(DIST_DIR) $(shell basename $(DIST_BASE_DIR))
 	zip -r $(DIST_BASE_DIR).zip $(DIST_BASE_DIR)
 
 install: egc
