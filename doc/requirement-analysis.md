@@ -18,7 +18,7 @@ The source of these is a course I took in university:
   + table structure
   + multiplication method
   + division method
-  + unit fraction type
+  + ~~unit~~ fraction type(changed)
   + egyptian fraction type and computation
   + false position method
   + TBD
