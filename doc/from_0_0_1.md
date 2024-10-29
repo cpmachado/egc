@@ -17,6 +17,6 @@ distributed in 0.0.1.
 
 ## Goals
 
-- Implement features
-- Document features
+- Implement libegc features
+- Integrate in CLI of egc
 - Change build system to conan
