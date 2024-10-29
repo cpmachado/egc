@@ -21,7 +21,7 @@ BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
 BIN_DIR = $(BUILD_DIR)/bin
 DIST_DIR = $(BUILD_DIR)/dist
-DIST_BASE_DIR = $(DIST_DIR)/egc-$(VERSION)
+DIST_BASE_DIR = egc-$(VERSION)
 
 LIBEGC_SRC_DIR = src/egc
 LIBEGC_OBJ_DIR = $(BUILD_DIR)/obj/egc
@@ -61,9 +61,10 @@ options:
 
 
 dist:
-	mkdir -p $(DIST_BASE_DIR)
-	cp -r $(PKGFILES) $(DIST_BASE_DIR)
-	tar -cz  -f $(DIST_BASE_DIR).tar.gz -C $(DIST_DIR) $(shell basename $(DIST_BASE_DIR))
+	mkdir -p $(DIST_DIR)/$(DIST_BASE_DIR)
+	cp -r $(PKGFILES) $(DIST_DIR)/$(DIST_BASE_DIR)
+	cd $(DIST_DIR); \
+	tar -cz  -f $(DIST_BASE_DIR).tar.gz $(DIST_BASE_DIR); \
 	zip -r $(DIST_BASE_DIR).zip $(DIST_BASE_DIR)
 
 install: egc
