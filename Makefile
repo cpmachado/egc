@@ -67,7 +67,7 @@ dist:
 	tar -cz  -f $(DIST_BASE_DIR).tar.gz $(DIST_BASE_DIR); \
 	zip -r $(DIST_BASE_DIR).zip $(DIST_BASE_DIR)
 
-install: egc
+install: $(BIN)
 	@echo installing executable file to $(PREFIX)/bin
 	@mkdir -p $(PREFIX)/bin
 	@cp -f $(BIN) $(PREFIX)/bin
