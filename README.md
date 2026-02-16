@@ -15,10 +15,11 @@ Before release 1.0:
 - [ ] Add proper documentation.
 
 After:
+
 - Expand the suite of capabilities, with:
-    + Division
-    + False position method
-    + Others
+  - Division
+  - False position method
+  - Others
 - More to be defined.
 
 ## License
